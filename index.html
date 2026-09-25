@@ -370,7 +370,7 @@ dl.data dt{color:var(--muted)} dl.data dd{margin:0;font-weight:500;overflow-wrap
 // PROTÓTIPO: a verificação de login acontece dentro da página (não em um servidor).
 // A administradora abaixo é fixa; os demais usuários são cadastrados por ela e ficam no banco da página,
 // os usuários e senhas ficam no Supabase (Auth + tabela profiles); aqui só o rótulo do perfil.
-const ROLE_LABEL = { admin:'Administradora', atendente:'Atendente' };
+const ROLE_LABEL = { admin:'Administrador(a)', atendente:'Atendente' };
 const SUPABASE_URL = 'https://ukzrdavzydnfjnwmyyks.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrenJkYXZ6eWRuZmpud215eWtzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMzMxMzcsImV4cCI6MjEwNTkwOTEzN30.L8rwdx26aYMV4KXz5gCu_FO3Py5Sy4GXyv2ssJgq-yM';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth:{ persistSession:true, autoRefreshToken:true } });
@@ -964,7 +964,7 @@ function viewLogin(){
       if(error){ err.textContent = 'Usuário ou senha incorretos.'; return; }
       const rec = await store.getUser(u);
       if(!rec){ err.textContent = 'Usuário ou senha incorretos.'; await sb.auth.signOut(); return; }
-      if(rec.disabled){ err.textContent = 'Este perfil está desativado. Fale com a administradora.'; await sb.auth.signOut(); return; }
+      if(rec.disabled){ err.textContent = 'Este perfil está desativado. Fale com o(a) administrador(a).'; await sb.auth.signOut(); return; }
       me = { user:rec.user, name:rec.name, role:rec.role };
     }catch(_){ err.textContent = 'Não foi possível entrar agora. Tente de novo.'; return; }
     start();
@@ -982,7 +982,7 @@ function logout(){
 let unsubG = null;
 function guardSession(){
   unsubG?.(); const who0 = me?.user; if(!who0) return;
-  unsubG = store.watchUsers(l => { const r = l.find(x => x.user === who0); if(me && me.user === who0 && r && r.disabled){ unsubG?.(); unsubG = null; logout(); setTimeout(() => { const e = $('#le'); if(e) e.textContent = 'Seu perfil foi desativado pela administradora.'; }, 50); } });
+  unsubG = store.watchUsers(l => { const r = l.find(x => x.user === who0); if(me && me.user === who0 && r && r.disabled){ unsubG?.(); unsubG = null; logout(); setTimeout(() => { const e = $('#le'); if(e) e.textContent = 'Seu perfil foi desativado pelo(a) administrador(a).'; }, 50); } });
 }
 function start(){
   guardSession();
@@ -990,7 +990,7 @@ function start(){
   <header class="topbar"><div class="topbar-in">
     <div class="brand">${LOGO}<div class="sub-brand">Suporte ao Cliente</div></div>
     <div class="who">
-      <span class="chip-admin" title="${isAdmin()?'Administradora':'Atendente'}">${ic(isAdmin()?'shield':'user')}<span class="hide-sm">${isAdmin()?'Administradora':'Atendente'}</span></span>
+      <span class="chip-admin" title="${isAdmin()?'Administrador(a)':'Atendente'}">${ic(isAdmin()?'shield':'user')}<span class="hide-sm">${isAdmin()?'Administrador(a)':'Atendente'}</span></span>
       <span class="chip-user hide-sm">${esc(titleName(me.name))}</span>
       ${themeBtn('icon-btn')}
       <button class="nav-btn" id="bMe">${ic('user')}<span class="hide-sm">Meus Dados</span></button>
@@ -1569,10 +1569,10 @@ function openUsers(){
         <div class="two"><div class="field"><label for="un">Nome completo</label><input class="inp" id="un" required maxlength="80" value="${esc(keep.n)}"></div>
         <div class="field"><label for="uu">Usuário</label><input class="inp" id="uu" required maxlength="30" autocapitalize="none" spellcheck="false" placeholder="ex.: joao.silva" value="${esc(keep.u)}"></div></div>
         <div class="two"><div class="field"><label for="up">Senha inicial</label><input class="inp" id="up" type="password" required minlength="6" maxlength="60" autocomplete="new-password"></div>
-        <div class="field"><label for="ur">Perfil</label><select class="inp" id="ur"><option value="atendente" ${keep.r==='atendente'?'selected':''}>Atendente</option><option value="admin" ${keep.r==='admin'?'selected':''}>Administradora</option></select></div></div>
+        <div class="field"><label for="ur">Perfil</label><select class="inp" id="ur"><option value="atendente" ${keep.r==='atendente'?'selected':''}>Atendente</option><option value="admin" ${keep.r==='admin'?'selected':''}>Administrador(a)</option></select></div></div>
         <div class="err" id="ue" role="alert"></div>
         <button class="btn primary" type="submit">Cadastrar usuário</button>
-        <p class="note">Atendentes registram e respondem chamados. Só a administradora cadastra usuários, assuntos e cidades, reabre e exclui chamados.</p>
+        <p class="note">Atendentes registram e respondem chamados. Só o(a) administrador(a) cadastra usuários, assuntos e cidades, reabre e exclui chamados.</p>
       </form></div>`;
     $('#uf',body).onsubmit = async e => {
       e.preventDefault(); const err = $('#ue',body); err.textContent = '';
@@ -1651,10 +1651,10 @@ function openNew(){
     <div class="field"><label for="ns">Assunto</label>
       ${catalog.subjects.length
         ? `<select class="inp" id="ns" required><option value="" disabled selected>Selecione o assunto conforme a mensagem…</option>${catalog.subjects.map(s=>`<option>${esc(s)}</option>`).join('')}</select>`
-        : `<select class="inp" id="ns" required disabled><option value="">Nenhum assunto cadastrado</option></select><p class="note">${isAdmin()?'Cadastre os assuntos em “Cadastros”.':'A administradora precisa cadastrar os assuntos.'}</p>`}
+        : `<select class="inp" id="ns" required disabled><option value="">Nenhum assunto cadastrado</option></select><p class="note">${isAdmin()?'Cadastre os assuntos em “Cadastros”.':'O(a) administrador(a) precisa cadastrar os assuntos.'}</p>`}
     </div>
     <div class="two">
-      <div class="field"><label for="nt">Tipo</label>${catalog.types.length ? `<select class="inp" id="nt" required>${catalog.types.map(t=>`<option>${esc(t)}</option>`).join('')}</select>` : `<select class="inp" id="nt" required disabled><option value="">Nenhum tipo cadastrado</option></select><p class="note">${isAdmin()?'Cadastre os tipos em “Cadastros”.':'A administradora precisa cadastrar os tipos.'}</p>`}</div>
+      <div class="field"><label for="nt">Tipo</label>${catalog.types.length ? `<select class="inp" id="nt" required>${catalog.types.map(t=>`<option>${esc(t)}</option>`).join('')}</select>` : `<select class="inp" id="nt" required disabled><option value="">Nenhum tipo cadastrado</option></select><p class="note">${isAdmin()?'Cadastre os tipos em “Cadastros”.':'O(a) administrador(a) precisa cadastrar os tipos.'}</p>`}</div>
       <div class="field"><label for="ncity">Cidade da ocorrência <span style="font-weight:400">(opcional)</span></label><select class="inp" id="ncity"><option value="">Não informada</option>${catalog.cities.map(c=>`<option>${esc(c)}</option>`).join('')}</select></div>
     </div>
     <div class="two">
@@ -1756,7 +1756,7 @@ function renderComposer(soft){
     <textarea class="inp" id="rt" maxlength="2000" ${closed?'disabled':''} placeholder="${closed?(isAdmin()?'Chamado encerrado. Reabra para responder.':'Chamado encerrado.'):(open.clientMode?'Mensagem recebida do cliente…':'Resposta… (Ctrl+Enter para enviar)')}" aria-label="Resposta"></textarea>
     <div class="chips" id="rchips"></div>
     <div class="c-actions">
-      ${closed ? (isAdmin() ? `<button class="btn" id="rReopen">Reabrir chamado</button>` : `<span class="note">Somente a administradora pode reabrir este chamado.</span>`) : `${t.status==='analise' ? `<button class="btn" id="rResume">Retomar atendimento</button>` : `<button class="btn" id="rAnalise">Colocar em análise</button>`}<button class="btn" id="rClose">Encerrar chamado</button>`}
+      ${closed ? (isAdmin() ? `<button class="btn" id="rReopen">Reabrir chamado</button>` : `<span class="note">Somente o(a) administrador(a) pode reabrir este chamado.</span>`) : `${t.status==='analise' ? `<button class="btn" id="rResume">Retomar atendimento</button>` : `<button class="btn" id="rAnalise">Colocar em análise</button>`}<button class="btn" id="rClose">Encerrar chamado</button>`}
       <button class="iconbtn" id="rclip" type="button" title="Anexar arquivo" aria-label="Anexar arquivo" ${closed?'disabled':''}>${ic('clip')}</button>
       <input type="file" id="rfile" accept="${ACCEPT}" multiple hidden>
       ${closed?'':`<button class="linkbtn" id="rMode">${open.clientMode?'Voltar a responder':'Registrar mensagem do cliente'}</button>`}
@@ -1796,7 +1796,7 @@ function renderComposer(soft){
 }
 async function changeStatus(status, note){
   const cur = tickets.find(x => x.id === open.id);
-  if(status==='atendimento' && cur?.status==='encerrado' && !isAdmin()){ toast('Somente a administradora pode reabrir chamados.'); return; }
+  if(status==='atendimento' && cur?.status==='encerrado' && !isAdmin()){ toast('Somente o(a) administrador(a) pode reabrir chamados.'); return; }
   const id = open.id; const now = new Date().toISOString();
   try{
     await store.addMessage(id, { side:'system', author:me.user, at:now, text:note, files:[] });
