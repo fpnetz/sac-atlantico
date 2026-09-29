@@ -15,6 +15,7 @@
   --brand:#0C8289; --blue:#1B57B7; --blue-text:#1B57B7; --blue-soft:#E4ECFA;
   --amber:#8A5200; --amber-soft:#FCEFD3; --green:#1D6B4A; --green-soft:#DDF1E7;
   --red:#B3261E; --red-soft:#FDE4E2; --bubble-client:#E9EEF3; --violet:#5B3FB5; --violet-soft:#ECE6FA;
+  --navy:#1E3A5F; --navy-soft:#DCE5F0;
   --shadow:0 1px 2px rgba(19,34,46,.06),0 10px 30px rgba(19,34,46,.08); --overlay:rgba(12,22,30,.5);
   --ff:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
 }
@@ -25,6 +26,7 @@
     --brand:#3CC0C7; --blue:#2F6FD6; --blue-text:#8DB4F5; --blue-soft:#1B2C4A;
     --amber:#F0B44C; --amber-soft:#3A2C10; --green:#5FD09A; --green-soft:#12301F;
     --red:#FF8A80; --red-soft:#3A1917; --bubble-client:#22303B; --violet:#B7A6F5; --violet-soft:#2A2350;
+    --navy:#2F4A75; --navy-soft:#1C2A3E;
     --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.4); --overlay:rgba(0,0,0,.62);
   }
 }
@@ -34,6 +36,7 @@
   --brand:#3CC0C7; --blue:#2F6FD6; --blue-text:#8DB4F5; --blue-soft:#1B2C4A;
   --amber:#F0B44C; --amber-soft:#3A2C10; --green:#5FD09A; --green-soft:#12301F;
   --red:#FF8A80; --red-soft:#3A1917; --bubble-client:#22303B; --violet:#B7A6F5; --violet-soft:#2A2350;
+  --navy:#2F4A75; --navy-soft:#1C2A3E;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.4); --overlay:rgba(0,0,0,.62);
 }
 *{box-sizing:border-box}
@@ -161,6 +164,10 @@ tbody tr:hover{background:var(--surface-2)}
 .st-analise{background:var(--violet-soft);color:var(--violet)}
 .st-atendimento{background:var(--amber-soft);color:var(--amber)}
 .st-encerrado{background:var(--green-soft);color:var(--green)}
+.pill.flag{border-radius:999px;padding:3px 12px;font-weight:600;background:var(--amber-soft);color:var(--amber);border:0;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.pill.flag:hover{filter:brightness(0.96)}
+.pill.flag.off{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.pill.flag.mini{cursor:default;padding:2px 9px;font-size:11px;font-weight:600;margin-left:6px;vertical-align:1px}
 .empty{padding:48px 16px;text-align:center;color:var(--muted)}
 
 /* modal */
@@ -182,11 +189,13 @@ tbody tr:hover{background:var(--surface-2)}
 .sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--line)}
 .msg{display:flex;flex-direction:column;margin-bottom:12px;max-width:100%}
 .msg .meta{font-size:12px;color:var(--muted);margin-bottom:4px}
-.msg.staff{align-items:flex-end}
+.msg.staff.me{align-items:flex-end}
+.msg.staff.other{align-items:flex-start}
 .msg.staff .meta .del{background:none;border:0;color:var(--red);padding:0 0 0 6px;font-size:12px}
 .bubble{padding:10px 14px;border-radius:14px;max-width:88%;overflow-wrap:anywhere;white-space:pre-wrap}
 .client .bubble{background:var(--bubble-client);border-bottom-left-radius:4px}
-.staff .bubble{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.staff.me .bubble{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.staff.other .bubble{background:var(--navy);color:#fff;border-bottom-left-radius:4px}
 .sys{text-align:center;color:var(--muted);font-size:12.5px;margin:12px 0}
 .atts{display:flex;flex-direction:column;gap:6px;margin-top:8px;align-items:flex-start;white-space:normal}
 .att{display:inline-flex;align-items:center;gap:8px;border-radius:8px;padding:6px 10px;font-size:13px;border:1px solid rgba(127,140,150,.4);background:rgba(127,140,150,.14);color:inherit;max-width:100%;text-align:left}
@@ -353,7 +362,8 @@ dl.data dt{color:var(--muted)} dl.data dd{margin:0;font-weight:500;overflow-wrap
 
   /* balões de conversa do chamado */
   .printing .bubble{border:1px solid #d7e0e2!important}
-  .printing .staff .bubble{background:#00959f!important;color:#fff!important}
+  .printing .staff.me .bubble{background:#00959f!important;color:#fff!important}
+  .printing .staff.other .bubble{background:#1e3a5f!important;color:#fff!important}
   .printing .client .bubble{background:#eef2f4!important;color:#151f28!important}
 
   @page{margin:10mm}
@@ -370,7 +380,7 @@ dl.data dt{color:var(--muted)} dl.data dd{margin:0;font-weight:500;overflow-wrap
 // PROTÓTIPO: a verificação de login acontece dentro da página (não em um servidor).
 // A administradora abaixo é fixa; os demais usuários são cadastrados por ela e ficam no banco da página,
 // os usuários e senhas ficam no Supabase (Auth + tabela profiles); aqui só o rótulo do perfil.
-const ROLE_LABEL = { admin:'Administrador(a)', atendente:'Atendente' };
+const ROLE_LABEL = { admin:'Administradora', atendente:'Atendente' };
 const SUPABASE_URL = 'https://ukzrdavzydnfjnwmyyks.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrenJkYXZ6eWRuZmpud215eWtzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMzMxMzcsImV4cCI6MjEwNTkwOTEzN30.L8rwdx26aYMV4KXz5gCu_FO3Py5Sy4GXyv2ssJgq-yM';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth:{ persistSession:true, autoRefreshToken:true } });
@@ -859,11 +869,13 @@ const t2r = t => ({          // ticket: camelCase (app) -> snake_case (banco)
   id:t.id, type:t.type, subject:t.subject, city:t.city||null, contact:t.contact||null, status:t.status,
   created_at:t.createdAt, created_by:t.createdBy||null, last_message_at:t.lastMessageAt||null,
   last_preview:t.lastPreview||null, last_side:t.lastSide||null, replies_by:t.repliesBy||{},
-  closed_by:t.closedBy===undefined?undefined:t.closedBy, closed_at:t.closedAt===undefined?undefined:t.closedAt
+  closed_by:t.closedBy===undefined?undefined:t.closedBy, closed_at:t.closedAt===undefined?undefined:t.closedAt,
+  awaiting_admin:!!t.awaitingAdmin
 });
 const r2t = r => ({ id:r.id, type:r.type, subject:r.subject, city:r.city, contact:r.contact, status:r.status,
   createdAt:r.created_at, createdBy:r.created_by, lastMessageAt:r.last_message_at, lastPreview:r.last_preview,
-  lastSide:r.last_side, repliesBy:r.replies_by||{}, closedBy:r.closed_by, closedAt:r.closed_at });
+  lastSide:r.last_side, repliesBy:r.replies_by||{}, closedBy:r.closed_by, closedAt:r.closed_at,
+  awaitingAdmin:!!r.awaiting_admin });
 const m2r = (ticketId, m) => ({ ticket_id:ticketId, side:m.side, author:m.author||null, at:m.at, text:m.text||null, files:m.files||[] });
 const r2m = r => ({ id:r.id, side:r.side, author:r.author, at:r.at, text:r.text, files:r.files||[] });
 const p2u = r => ({ user:r.username, name:r.name, role:r.role, disabled:r.disabled, disabledAt:r.disabled_at, disabledBy:r.disabled_by, createdBy:r.created_by, createdAt:r.created_at });
@@ -892,7 +904,7 @@ const store = {
     const row = t2r(t); const { error } = await sb.from('tickets').insert(row); if(error) throw error;
   },
   async patchTicket(id, patch){
-    const row = {}; for(const k in patch){ row[({createdAt:'created_at',createdBy:'created_by',lastMessageAt:'last_message_at',lastPreview:'last_preview',lastSide:'last_side',repliesBy:'replies_by',closedBy:'closed_by',closedAt:'closed_at'})[k] || k] = patch[k]; }
+    const row = {}; for(const k in patch){ row[({createdAt:'created_at',createdBy:'created_by',lastMessageAt:'last_message_at',lastPreview:'last_preview',lastSide:'last_side',repliesBy:'replies_by',closedBy:'closed_by',closedAt:'closed_at',awaitingAdmin:'awaiting_admin'})[k] || k] = patch[k]; }
     const { error } = await sb.from('tickets').update(row).eq('id', id); if(error) throw error;
   },
   async addMessage(id, m){
@@ -964,7 +976,7 @@ function viewLogin(){
       if(error){ err.textContent = 'Usuário ou senha incorretos.'; return; }
       const rec = await store.getUser(u);
       if(!rec){ err.textContent = 'Usuário ou senha incorretos.'; await sb.auth.signOut(); return; }
-      if(rec.disabled){ err.textContent = 'Este perfil está desativado. Fale com o(a) administrador(a).'; await sb.auth.signOut(); return; }
+      if(rec.disabled){ err.textContent = 'Este perfil está desativado. Fale com a administradora.'; await sb.auth.signOut(); return; }
       me = { user:rec.user, name:rec.name, role:rec.role };
     }catch(_){ err.textContent = 'Não foi possível entrar agora. Tente de novo.'; return; }
     start();
@@ -982,7 +994,7 @@ function logout(){
 let unsubG = null;
 function guardSession(){
   unsubG?.(); const who0 = me?.user; if(!who0) return;
-  unsubG = store.watchUsers(l => { const r = l.find(x => x.user === who0); if(me && me.user === who0 && r && r.disabled){ unsubG?.(); unsubG = null; logout(); setTimeout(() => { const e = $('#le'); if(e) e.textContent = 'Seu perfil foi desativado pelo(a) administrador(a).'; }, 50); } });
+  unsubG = store.watchUsers(l => { const r = l.find(x => x.user === who0); if(me && me.user === who0 && r && r.disabled){ unsubG?.(); unsubG = null; logout(); setTimeout(() => { const e = $('#le'); if(e) e.textContent = 'Seu perfil foi desativado pela administradora.'; }, 50); } });
 }
 function start(){
   guardSession();
@@ -990,7 +1002,7 @@ function start(){
   <header class="topbar"><div class="topbar-in">
     <div class="brand">${LOGO}<div class="sub-brand">Suporte ao Cliente</div></div>
     <div class="who">
-      <span class="chip-admin" title="${isAdmin()?'Administrador(a)':'Atendente'}">${ic(isAdmin()?'shield':'user')}<span class="hide-sm">${isAdmin()?'Administrador(a)':'Atendente'}</span></span>
+      <span class="chip-admin" title="${isAdmin()?'Administradora':'Atendente'}">${ic(isAdmin()?'shield':'user')}<span class="hide-sm">${isAdmin()?'Administradora':'Atendente'}</span></span>
       <span class="chip-user hide-sm">${esc(titleName(me.name))}</span>
       ${themeBtn('icon-btn')}
       <button class="nav-btn" id="bMe">${ic('user')}<span class="hide-sm">Meus Dados</span></button>
@@ -1072,7 +1084,7 @@ function renderList(){
     <td class="when">${t.createdAt ? dmyhm(t.createdAt) : '—'}</td>
     <td class="city">${esc(t.city || '—')}</td>
     <td><span class="pill type-${TYPE_SLUG[t.type]||'duvida'}">${esc(t.type)}</span></td>
-    <td class="subj"><div class="s1">${esc(t.subject)}${t.example?'<span class="ex">exemplo</span>':''}</div><div class="s2">${esc(t.lastPreview||'')}</div></td>
+    <td class="subj"><div class="s1">${esc(t.subject)}${t.example?'<span class="ex">exemplo</span>':''}${t.awaitingAdmin?'<span class="pill flag mini">Aguardando administrador(a)</span>':''}</div><div class="s2">${esc(t.lastPreview||'')}</div></td>
     <td><span class="pill st st-${t.status}">${STATUS[t.status]||''}</span></td>
     <td class="when">${rel(t.lastMessageAt)}</td>
     <td class="open"><button class="link" tabindex="-1">Abrir</button></td></tr>`).join('');
@@ -1569,10 +1581,10 @@ function openUsers(){
         <div class="two"><div class="field"><label for="un">Nome completo</label><input class="inp" id="un" required maxlength="80" value="${esc(keep.n)}"></div>
         <div class="field"><label for="uu">Usuário</label><input class="inp" id="uu" required maxlength="30" autocapitalize="none" spellcheck="false" placeholder="ex.: joao.silva" value="${esc(keep.u)}"></div></div>
         <div class="two"><div class="field"><label for="up">Senha inicial</label><input class="inp" id="up" type="password" required minlength="6" maxlength="60" autocomplete="new-password"></div>
-        <div class="field"><label for="ur">Perfil</label><select class="inp" id="ur"><option value="atendente" ${keep.r==='atendente'?'selected':''}>Atendente</option><option value="admin" ${keep.r==='admin'?'selected':''}>Administrador(a)</option></select></div></div>
+        <div class="field"><label for="ur">Perfil</label><select class="inp" id="ur"><option value="atendente" ${keep.r==='atendente'?'selected':''}>Atendente</option><option value="admin" ${keep.r==='admin'?'selected':''}>Administradora</option></select></div></div>
         <div class="err" id="ue" role="alert"></div>
         <button class="btn primary" type="submit">Cadastrar usuário</button>
-        <p class="note">Atendentes registram e respondem chamados. Só o(a) administrador(a) cadastra usuários, assuntos e cidades, reabre e exclui chamados.</p>
+        <p class="note">Atendentes registram e respondem chamados. Só a administradora cadastra usuários, assuntos e cidades, reabre e exclui chamados.</p>
       </form></div>`;
     $('#uf',body).onsubmit = async e => {
       e.preventDefault(); const err = $('#ue',body); err.textContent = '';
@@ -1651,10 +1663,10 @@ function openNew(){
     <div class="field"><label for="ns">Assunto</label>
       ${catalog.subjects.length
         ? `<select class="inp" id="ns" required><option value="" disabled selected>Selecione o assunto conforme a mensagem…</option>${catalog.subjects.map(s=>`<option>${esc(s)}</option>`).join('')}</select>`
-        : `<select class="inp" id="ns" required disabled><option value="">Nenhum assunto cadastrado</option></select><p class="note">${isAdmin()?'Cadastre os assuntos em “Cadastros”.':'O(a) administrador(a) precisa cadastrar os assuntos.'}</p>`}
+        : `<select class="inp" id="ns" required disabled><option value="">Nenhum assunto cadastrado</option></select><p class="note">${isAdmin()?'Cadastre os assuntos em “Cadastros”.':'A administradora precisa cadastrar os assuntos.'}</p>`}
     </div>
     <div class="two">
-      <div class="field"><label for="nt">Tipo</label>${catalog.types.length ? `<select class="inp" id="nt" required>${catalog.types.map(t=>`<option>${esc(t)}</option>`).join('')}</select>` : `<select class="inp" id="nt" required disabled><option value="">Nenhum tipo cadastrado</option></select><p class="note">${isAdmin()?'Cadastre os tipos em “Cadastros”.':'O(a) administrador(a) precisa cadastrar os tipos.'}</p>`}</div>
+      <div class="field"><label for="nt">Tipo</label>${catalog.types.length ? `<select class="inp" id="nt" required>${catalog.types.map(t=>`<option>${esc(t)}</option>`).join('')}</select>` : `<select class="inp" id="nt" required disabled><option value="">Nenhum tipo cadastrado</option></select><p class="note">${isAdmin()?'Cadastre os tipos em “Cadastros”.':'A administradora precisa cadastrar os tipos.'}</p>`}</div>
       <div class="field"><label for="ncity">Cidade da ocorrência <span style="font-weight:400">(opcional)</span></label><select class="inp" id="ncity"><option value="">Não informada</option>${catalog.cities.map(c=>`<option>${esc(c)}</option>`).join('')}</select></div>
     </div>
     <div class="two">
@@ -1698,7 +1710,7 @@ function openNew(){
 
 /* ───────── detalhe do chamado ───────── */
 function headHTML(t){
-  return `<div class="tags"><span class="pill type-${TYPE_SLUG[t.type]||'duvida'}">${esc(t.type)}</span><span class="pill st st-${t.status}">${STATUS[t.status]}</span></div>
+  return `<div class="tags"><span class="pill type-${TYPE_SLUG[t.type]||'duvida'}">${esc(t.type)}</span><span class="pill st st-${t.status}">${STATUS[t.status]}</span>${t.status!=='encerrado' ? `<button class="pill flag no-print${t.awaitingAdmin?'':' off'}" id="dFlag" type="button">${t.awaitingAdmin?'Aguardando retorno do administrador(a)':'Sinalizar aguardando administrador(a)'}</button>` : ''}</div>
   <h2>${esc(t.subject)}</h2>
   <div class="meta"><span class="proto">${esc(t.id)}</span>${t.city?` · ${esc(t.city)}`:''} · Registrado em ${dmyhm(t.createdAt)}${t.createdBy?` por ${esc(t.createdBy)}`:''}${t.contact?` · Contato: ${esc(t.contact)}`:''}</div>
   <p class="note" style="display:none" id="dWppNote">Atendimento registrado via WhatsApp — o relato do cliente é registrado uma única vez, na abertura do chamado; as atualizações seguintes são feitas por quem está atendendo.</p>
@@ -1721,6 +1733,8 @@ function renderHead(){
   h.querySelector('.x').onclick = open.o._close;
   $('#dLink', open.o).onclick = () => copyLink(t.id);
   $('#dPrint', open.o).onclick = () => exportChamadoPDF(t, open.msgs);
+  const f = $('#dFlag', open.o);
+  if(f) f.onclick = async () => { f.disabled = true; try{ await store.patchTicket(t.id, { awaitingAdmin: !t.awaitingAdmin }); }catch(_){ toast('Não foi possível atualizar.'); f.disabled = false; } };
   const d = $('#dDel', open.o);
   if(d) d.onclick = () => confirmClick(d, 'Confirmar exclusão?', async () => { try{ await store.delTicket(t.id); open.o._close(); toast('Chamado excluído.'); }catch(_){ toast('Não foi possível excluir.'); } });
 }
@@ -1731,15 +1745,18 @@ function renderMsgs(scroll){
     if(day !== last){ html += `<div class="sep">${day}</div>`; last = day; }
     if(m.side==='system'){ html += `<div class="sys">${esc(m.text)} · ${dm(m.at)}</div>`; continue; }
     const canDel = m.side==='staff' && (me.role==='admin' || m.author===me.user);
-    html += `<div class="msg ${m.side}"><div class="meta">${esc(m.author)} · ${dm(m.at)}${canDel?`<button class="del" data-del="${esc(m.id)}">Apagar</button>`:''}</div>
+    const who2 = m.side==='staff' ? (m.author===me.user?'me':'other') : '';
+    html += `<div class="msg ${m.side}${who2?' '+who2:''}"><div class="meta">${esc(m.author)} · ${dm(m.at)}${canDel?`<button class="del" data-del="${esc(m.id)}">Apagar</button>`:''}</div>
       <div class="bubble">${esc(m.text)}${attsHTML(m.files)}</div></div>`;
   }
   const stick = scroll && (body.scrollHeight - body.scrollTop - body.clientHeight < 120 || !body.dataset.init);
   body.innerHTML = html; body.dataset.init='1';
   body.querySelectorAll('[data-del]').forEach(b => b.onclick = () => confirmClick(b, 'Confirmar?', async () => {
     const m = open.msgs.find(x => String(x.id) === b.dataset.del), t = tickets.find(x => x.id === open.id);
-    await store.delMessage(open.id, b.dataset.del);
-    if(m && t && (t.repliesBy||{})[m.author] > 0){ try{ await store.patchTicket(t.id, { repliesBy:{ ...t.repliesBy, [m.author]: t.repliesBy[m.author] - 1 } }); }catch(_){} }
+    try{
+      await store.delMessage(open.id, b.dataset.del);
+      if(m && t && (t.repliesBy||{})[m.author] > 0){ try{ await store.patchTicket(t.id, { repliesBy:{ ...t.repliesBy, [m.author]: t.repliesBy[m.author] - 1 } }); }catch(_){} }
+    }catch(err){ console.error('delMessage falhou', err); toast('Não foi possível apagar a mensagem. ' + (err?.message||'')); delete b.dataset.armed; b.textContent='Apagar'; }
   }));
   hydrateImages(body, open.msgs.flatMap(m=>m.files||[]));
   if(stick) body.scrollTop = body.scrollHeight;
@@ -1756,7 +1773,7 @@ function renderComposer(soft){
     <textarea class="inp" id="rt" maxlength="2000" ${closed?'disabled':''} placeholder="${closed?(isAdmin()?'Chamado encerrado. Reabra para responder.':'Chamado encerrado.'):(open.clientMode?'Mensagem recebida do cliente…':'Resposta… (Ctrl+Enter para enviar)')}" aria-label="Resposta"></textarea>
     <div class="chips" id="rchips"></div>
     <div class="c-actions">
-      ${closed ? (isAdmin() ? `<button class="btn" id="rReopen">Reabrir chamado</button>` : `<span class="note">Somente o(a) administrador(a) pode reabrir este chamado.</span>`) : `${t.status==='analise' ? `<button class="btn" id="rResume">Retomar atendimento</button>` : `<button class="btn" id="rAnalise">Colocar em análise</button>`}<button class="btn" id="rClose">Encerrar chamado</button>`}
+      ${closed ? (isAdmin() ? `<button class="btn" id="rReopen">Reabrir chamado</button>` : `<span class="note">Somente a administradora pode reabrir este chamado.</span>`) : `${t.status==='analise' ? `<button class="btn" id="rResume">Retomar atendimento</button>` : `<button class="btn" id="rAnalise">Colocar em análise</button>`}<button class="btn" id="rClose">Encerrar chamado</button>`}
       <button class="iconbtn" id="rclip" type="button" title="Anexar arquivo" aria-label="Anexar arquivo" ${closed?'disabled':''}>${ic('clip')}</button>
       <input type="file" id="rfile" accept="${ACCEPT}" multiple hidden>
       ${closed?'':`<button class="linkbtn" id="rMode">${open.clientMode?'Voltar a responder':'Registrar mensagem do cliente'}</button>`}
@@ -1796,7 +1813,7 @@ function renderComposer(soft){
 }
 async function changeStatus(status, note){
   const cur = tickets.find(x => x.id === open.id);
-  if(status==='atendimento' && cur?.status==='encerrado' && !isAdmin()){ toast('Somente o(a) administrador(a) pode reabrir chamados.'); return; }
+  if(status==='atendimento' && cur?.status==='encerrado' && !isAdmin()){ toast('Somente a administradora pode reabrir chamados.'); return; }
   const id = open.id; const now = new Date().toISOString();
   try{
     await store.addMessage(id, { side:'system', author:me.user, at:now, text:note, files:[] });
