@@ -1201,7 +1201,7 @@ function openReport(){
     $('#repRes', o).innerHTML = `
       <div class="rep-tiles">
         <div class="rep-tile"><div class="n">${inRange.length}</div><div class="l">Registrados</div></div>
-        <div class="rep-tile"><div class="n">${cnt.atendimento + cnt.analise + cnt.encerrado}</div><div class="l">Atendidos (respondidos ou em análise)</div></div>
+        <div class="rep-tile"><div class="n">${cnt.atendimento + cnt.analise + cnt.encerrado}</div><div class="l">Atendidos</div></div>
         <div class="rep-tile"><div class="n">${cnt.encerrado}</div><div class="l">Encerrados</div></div>
         <div class="rep-tile"><div class="n">${cnt.aberto}</div><div class="l">Sem resposta</div></div>
       </div>
@@ -1402,7 +1402,7 @@ function openPanorama(){
         <div class="rep-tile"><div class="n">${list.length}</div><div class="l">Ocorrências no período</div></div>
         <div class="rep-tile"><div class="n">${nUF}</div><div class="l">Estados com ocorrências</div></div>
         <div class="rep-tile"><div class="n">${cnt.encerrado}</div><div class="l">Encerradas</div></div>
-        <div class="rep-tile"><div class="n">${cnt.aberto + cnt.atendimento + cnt.analise}</div><div class="l">Em andamento (abertos, em atendimento ou em análise)</div></div>
+        <div class="rep-tile"><div class="n">${cnt.aberto + cnt.atendimento + cnt.analise}</div><div class="l">Em andamento</div></div>
       </div>
       <div class="pan-grid">
         <section class="pan-card" aria-label="Mapa do Brasil">
